@@ -9,9 +9,11 @@
 using namespace std;
 
 // Function to read the content of a file
-string read_file(const string& filename) {
+string read_file(const string &filename)
+{
     ifstream file(filename);
-    if (!file) {
+    if (!file)
+    {
         cout << "Error: Unable to open file " << filename << endl;
         exit(1);
     }
@@ -20,9 +22,11 @@ string read_file(const string& filename) {
 }
 
 // Function to write content to a file
-void write_file(const string& filename, const string& content) {
+void write_file(const string &filename, const string &content)
+{
     ofstream file(filename);
-    if (!file) {
+    if (!file)
+    {
         cout << "Error: Unable to open file " << filename << endl;
         exit(1);
     }
@@ -30,33 +34,89 @@ void write_file(const string& filename, const string& content) {
 }
 
 // Function to decrypt using RSA with third party public key
-string rsa_decrypt(const string& encrypted_msg, RSA* public_key) {
+string rsa_decrypt(const string &encrypted_msg, RSA *public_key)
+{
     int rsa_size = RSA_size(public_key);
-    unsigned char *decrypted_msg = (unsigned char*)malloc(rsa_size);
-    int decrypted_length = RSA_public_decrypt(rsa_size, (const unsigned char*)encrypted_msg.c_str(), decrypted_msg, public_key, RSA_NO_PADDING);
-    if (decrypted_length == -1) {
+    unsigned char *decrypted_msg = (unsigned char *)malloc(rsa_size);
+    int decrypted_length = RSA_public_decrypt(rsa_size, (const unsigned char *)encrypted_msg.c_str(), decrypted_msg, public_key, RSA_NO_PADDING);
+    if (decrypted_length == -1)
+    {
         cout << "RSA decryption error" << endl;
         ERR_print_errors_fp(stderr);
         exit(1);
     }
-    string decrypted_str((char*)decrypted_msg, decrypted_length);
+    string decrypted_str((char *)decrypted_msg, decrypted_length);
     free(decrypted_msg);
     return decrypted_str;
 }
 
 // Function to encrypt using symmetric key algorithm (AES in this case)
-string symmetric_encrypt(const string& plaintext, const string& symmetric_key) {
-    // Perform symmetric encryption (AES)
-    // You can implement AES encryption or use OpenSSL's EVP interface for this
-    // For demonstration, let's assume you have an AES encryption function
-    // string encrypted_text = aes_encrypt(plaintext, symmetric_key);
+string symmetric_encrypt(const string &plaintext, const string &symmetric_key)
+{
+    // Initialize the cipher context
+    EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    if (!ctx)
+    {
+        // Handle error
+        return "";
+    }
 
-    // For now, let's just return plaintext as demonstration
-    return plaintext;
+    // Initialize the encryption operation with AES-256 CBC mode
+    if (EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, (const unsigned char *)symmetric_key.c_str(), NULL) != 1)
+    {
+        // Handle error
+        EVP_CIPHER_CTX_free(ctx);
+        return "";
+    }
+
+    // Allocate memory for the ciphertext (plaintext + AES block size)
+    int ciphertext_len = plaintext.length() + EVP_CIPHER_block_size(EVP_aes_256_cbc());
+    unsigned char *ciphertext = (unsigned char *)malloc(ciphertext_len);
+    if (!ciphertext)
+    {
+        // Handle error
+        EVP_CIPHER_CTX_free(ctx);
+        return "";
+    }
+
+    int len;
+    int ciphertext_actual_len;
+
+    // Perform the encryption
+    if (EVP_EncryptUpdate(ctx, ciphertext, &len, (const unsigned char *)plaintext.c_str(), plaintext.length()) != 1)
+    {
+        // Handle error
+        free(ciphertext);
+        EVP_CIPHER_CTX_free(ctx);
+        return "";
+    }
+    ciphertext_actual_len = len;
+
+    // Finalize the encryption
+    if (EVP_EncryptFinal_ex(ctx, ciphertext + len, &len) != 1)
+    {
+        // Handle error
+        free(ciphertext);
+        EVP_CIPHER_CTX_free(ctx);
+        return "";
+    }
+    ciphertext_actual_len += len;
+
+    // Clean up
+    EVP_CIPHER_CTX_free(ctx);
+
+    // Convert the ciphertext to a string
+    string encrypted_text(reinterpret_cast<const char *>(ciphertext), ciphertext_actual_len);
+
+    // Free memory
+    free(ciphertext);
+
+    return encrypted_text;
 }
 
 // Function to sign content using RSA private key
-string rsa_sign(const string& content, RSA* private_key) {
+string rsa_sign(const string &content, RSA *private_key)
+{
     // Perform RSA signing with private key
     // You can implement RSA signing or use OpenSSL's EVP interface for this
     // For demonstration, let's assume you have an RSA signing function
@@ -66,8 +126,10 @@ string rsa_sign(const string& content, RSA* private_key) {
     return content;
 }
 
-int main(int argc, char *argv[]) {
-    if (argc != 4) {
+int main(int argc, char *argv[])
+{
+    if (argc != 4)
+    {
         cout << "Usage: " << argv[0] << " <encrypted_message_file> <third_party_public_key> <your_private_key>" << endl;
         return 1;
     }
@@ -78,13 +140,15 @@ int main(int argc, char *argv[]) {
 
     // Load third party public key
     FILE *public_key_fp = fopen(public_key_file.c_str(), "r");
-    if (!public_key_fp) {
+    if (!public_key_fp)
+    {
         cout << "Error: Unable to open third party public key file" << endl;
         return 1;
     }
-    RSA* public_key = PEM_read_RSA_PUBKEY(public_key_fp, NULL, NULL, NULL);
+    RSA *public_key = PEM_read_RSA_PUBKEY(public_key_fp, NULL, NULL, NULL);
     fclose(public_key_fp);
-    if (!public_key) {
+    if (!public_key)
+    {
         cout << "Error: Unable to read third party public key" << endl;
         return 1;
     }
@@ -93,13 +157,15 @@ int main(int argc, char *argv[]) {
 
     // Load your private key
     FILE *private_key_fp = fopen(private_key_file.c_str(), "r");
-    if (!private_key_fp) {
+    if (!private_key_fp)
+    {
         cout << "Error: Unable to open your private key file" << endl;
         return 1;
     }
-    RSA* private_key = PEM_read_RSAPrivateKey(private_key_fp, NULL, NULL, NULL);
+    RSA *private_key = PEM_read_RSAPrivateKey(private_key_fp, NULL, NULL, NULL);
     fclose(private_key_fp);
-    if (!private_key) {
+    if (!private_key)
+    {
         cout << "Error: Unable to read your private key" << endl;
         return 1;
     }
@@ -113,7 +179,6 @@ int main(int argc, char *argv[]) {
     string symmetric_key = rsa_decrypt(encrypted_msg, public_key);
 
     cout << "Symmetric Key: " << symmetric_key << endl;
-
 
     // Step 3: Encrypt a text file with symmetric key
     string plaintext = "Your name: John Doe\nYour banner ID: B12345678\nSymmetric Algorithm: AES\n";
