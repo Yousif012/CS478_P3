@@ -266,6 +266,8 @@ int main(int argc, char *argv[])
 
     cout << "Symmetric Key: " << symmetric_key << endl;
 
+    write_file("symmetric.txt", symmetric_key);
+
     // Step 3: Encrypt a text file with symmetric key
     string plaintext = "Your name: John Doe\nYour banner ID: B12345678\nSymmetric Algorithm: AES\n";
     string encrypted_text = symmetric_encrypt(plaintext, symmetric_key);
@@ -278,6 +280,8 @@ int main(int argc, char *argv[])
     // Free memory
     RSA_free(public_key);
     RSA_free(private_key);
+
+    cout << "Signature: " << signature << endl;
 
     cout << "Encryption completed successfully." << endl;
 
