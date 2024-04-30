@@ -127,7 +127,7 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     }
 
     // Initialize the signing operation with the SHA-256 digest algorithm
-    if (EVP_DigestSignInit(md_ctx, NULL, EVP_sha256(), NULL, private_key) != 1)
+    if (EVP_DigestSignInit(md_ctx, NULL, NULL, NULL, private_key) != 1)
     {
         // Handle error
         EVP_MD_CTX_free(md_ctx);
