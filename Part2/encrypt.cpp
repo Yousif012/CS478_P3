@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     RSA *private_key = PEM_read_RSAPrivateKey(private_key_fp, NULL, NULL, NULL);
-    EVP_PKEY* private_key_evp = PEM_read_PrivateKey(private_key_fp, NULL, password_callback, NULL);
+    EVP_PKEY* private_key_evp = PEM_read_PrivateKey(private_key_fp, NULL, password_callback, (void*)passphrase.c_str());
     fclose(private_key_fp);
     if (!private_key)
     {
