@@ -10,7 +10,7 @@ using namespace std;
 
 // Function to read the content of a file
 string read_file(const string& filename) {
-    ifstream file(filename, ios::binary);
+    ifstream file(filename);
     if (!file) {
         cout << "Error: Unable to open file " << filename << endl;
         exit(1);
@@ -21,7 +21,7 @@ string read_file(const string& filename) {
 
 // Function to write content to a file
 void write_file(const string& filename, const string& content) {
-    ofstream file(filename, ios::binary);
+    ofstream file(filename);
     if (!file) {
         cout << "Error: Unable to open file " << filename << endl;
         exit(1);
