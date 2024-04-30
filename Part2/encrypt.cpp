@@ -33,7 +33,7 @@ void write_file(const string& filename, const string& content) {
 string rsa_decrypt(const string& encrypted_msg, RSA* public_key) {
     int rsa_size = RSA_size(public_key);
     unsigned char *decrypted_msg = (unsigned char*)malloc(rsa_size);
-    int decrypted_length = RSA_public_decrypt(encrypted_msg.size(), (const unsigned char*)encrypted_msg.c_str(), decrypted_msg, public_key, RSA_PKCS1_PADDING);
+    int decrypted_length = RSA_public_decrypt(rsa_size, (const unsigned char*)encrypted_msg.c_str(), decrypted_msg, public_key, RSA_PKCS1_PADDING);
     if (decrypted_length == -1) {
         cout << "RSA decryption error" << endl;
         ERR_print_errors_fp(stderr);
@@ -107,8 +107,13 @@ int main(int argc, char *argv[]) {
     // Read encrypted message
     string encrypted_msg = read_file(encrypted_msg_file);
 
+    cout << "Encrypted Message: " << encrypted_msg << endl;
+
     // Step 2: Decrypt the encrypted message with third party public key
     string symmetric_key = rsa_decrypt(encrypted_msg, public_key);
+
+    cout << "Symmetric Key: " << symmetric_key << endl;
+
 
     // Step 3: Encrypt a text file with symmetric key
     string plaintext = "Your name: John Doe\nYour banner ID: B12345678\nSymmetric Algorithm: AES\n";
