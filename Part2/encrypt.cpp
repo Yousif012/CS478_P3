@@ -122,7 +122,7 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     if (!md_ctx)
     {
         // Handle error
-        return "";
+        return "Error: Initialize the EVP_MD_CTX structure";
     }
 
     // Initialize the signing operation with the SHA-256 digest algorithm
@@ -130,7 +130,7 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     {
         // Handle error
         EVP_MD_CTX_free(md_ctx);
-        return "";
+        return "Error: Initialize the signing operation with the SHA-256 digest algorithm";
     }
 
     // Perform the signing operation
@@ -138,7 +138,7 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     {
         // Handle error
         EVP_MD_CTX_free(md_ctx);
-        return "";
+        return "Error: Perform the signing operation";
     }
 
     // Get the length of the signature
@@ -147,7 +147,7 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     {
         // Handle error
         EVP_MD_CTX_free(md_ctx);
-        return "";
+        return "Error: Get the length of the signature";
     }
 
     // Allocate memory for the signature
@@ -156,7 +156,7 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     {
         // Handle error
         EVP_MD_CTX_free(md_ctx);
-        return "";
+        return "Error: Allocate memory for the signature";
     }
 
     // Perform the final signing operation
@@ -165,7 +165,7 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
         // Handle error
         free(sig);
         EVP_MD_CTX_free(md_ctx);
-        return "";
+        return "Error: Perform the final signing operation";
     }
 
     // Convert the signature to a string
