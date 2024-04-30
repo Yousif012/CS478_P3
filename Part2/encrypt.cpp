@@ -122,7 +122,8 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     if (!md_ctx)
     {
         // Handle error
-        return "Error: Initialize the EVP_MD_CTX structure";
+        printf("EVP_MD_CTX_create failed, error 0x%lx\n", ERR_get_error());
+        return "";
     }
 
     // Initialize the signing operation with the SHA-256 digest algorithm
@@ -130,7 +131,8 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     {
         // Handle error
         EVP_MD_CTX_free(md_ctx);
-        return "Error: Initialize the signing operation with the SHA-256 digest algorithm";
+        printf("EVP_DigestSignInit failed, error 0x%lx\n", ERR_get_error());
+        return "";
     }
 
     // Perform the signing operation
@@ -138,7 +140,8 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     {
         // Handle error
         EVP_MD_CTX_free(md_ctx);
-        return "Error: Perform the signing operation";
+        printf("EVP_DigestSignUpdate failed, error 0x%lx\n", ERR_get_error());
+        return "";
     }
 
     // Get the length of the signature
@@ -147,7 +150,8 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     {
         // Handle error
         EVP_MD_CTX_free(md_ctx);
-        return "Error: Get the length of the signature";
+        printf("EVP_DigestSignFinal failed (1), error 0x%lx\n", ERR_get_error());
+        return "";
     }
 
     // Allocate memory for the signature
@@ -156,16 +160,19 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     {
         // Handle error
         EVP_MD_CTX_free(md_ctx);
-        return "Error: Allocate memory for the signature";
+        printf("OPENSSL_malloc failed, error 0x%lx\n", ERR_get_error());
+        return "";
     }
 
     // Perform the final signing operation
-    if (EVP_DigestSignFinal(md_ctx, sig, &sig_len) != 1)
+    int rc = EVP_DigestSignFinal(md_ctx, sig, &sig_len);
+    if (rc != 1)
     {
         // Handle error
         free(sig);
         EVP_MD_CTX_free(md_ctx);
-        return "Error: Perform the final signing operation";
+        printf("EVP_DigestSignFinal failed (3), return code %d, error 0x%lx\n", rc, ERR_get_error());
+        return "";
     }
 
     // Convert the signature to a string
