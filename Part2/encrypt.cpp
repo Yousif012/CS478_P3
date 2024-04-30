@@ -33,7 +33,7 @@ void write_file(const string& filename, const string& content) {
 string rsa_decrypt(const string& encrypted_msg, RSA* public_key) {
     int rsa_size = RSA_size(public_key);
     unsigned char *decrypted_msg = (unsigned char*)malloc(rsa_size);
-    int decrypted_length = RSA_public_decrypt(rsa_size, (const unsigned char*)encrypted_msg.c_str(), decrypted_msg, public_key, RSA_PKCS1_OAEP_PADDING);
+    int decrypted_length = RSA_public_decrypt(rsa_size, (const unsigned char*)encrypted_msg.c_str(), decrypted_msg, public_key, RSA_NO_PADDING);
     if (decrypted_length == -1) {
         cout << "RSA decryption error" << endl;
         ERR_print_errors_fp(stderr);
