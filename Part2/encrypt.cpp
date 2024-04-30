@@ -185,6 +185,20 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     return signature;
 }
 
+int password_callback(char *buf, int size, int rwflag, void *userdata) {
+    // Here, you could prompt the user for the password, read it from a secure source, etc.
+    // For demonstration purposes, let's assume the password is provided as userdata
+    const char *passphrase = reinterpret_cast<const char*>(userdata);
+    if (passphrase) {
+        strncpy(buf, passphrase, size);
+        return strlen(buf);
+    } else {
+        // Return 0 to indicate failure
+        return 0;
+    }
+}
+
+
 int main(int argc, char *argv[])
 {
     if (argc != 4)
@@ -223,7 +237,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     RSA *private_key = PEM_read_RSAPrivateKey(private_key_fp, NULL, NULL, NULL);
-    EVP_PKEY* private_key_evp = PEM_read_PrivateKey(private_key_fp, NULL, NULL, (void*)passphrase.c_str());
+    EVP_PKEY* private_key_evp = PEM_read_PrivateKey(private_key_fp, NULL, password_callback, NULL);
     fclose(private_key_fp);
     if (!private_key)
     {
