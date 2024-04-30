@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     getline(symmetric_key_stream, symmetric_key);
 
     // Decrypt the encrypted file using the symmetric key
-    ifstream encrypted_stream(encrypted_file, ios::binary);
+    ifstream encrypted_stream(encrypted_file);
     stringstream encrypted_buffer;
     encrypted_buffer << encrypted_stream.rdbuf();
     string encrypted_content = encrypted_buffer.str();
