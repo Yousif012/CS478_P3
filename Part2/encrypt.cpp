@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    cout << "RSA Private Key: " << private_key_evp << endl;
+    cout << "RSA Private Key: " << private_key << endl;
     cout << "EVP Private Key: " << private_key_evp << endl;
 
     // Read encrypted message
