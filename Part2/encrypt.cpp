@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
     }
     RSA *private_key = PEM_read_RSAPrivateKey(private_key_fp, NULL, NULL, NULL);
     EVP_PKEY* private_key_evp = PEM_read_PrivateKey(private_key_fp, NULL, NULL, (void*)passphrase.c_str());
-    fclose(`rivate_key_fp);
+    fclose(private_key_fp);
     if (!private_key)
     {
         cout << "Error: Unable to read your private key" << endl;
