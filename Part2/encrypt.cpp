@@ -196,6 +196,7 @@ int main(int argc, char *argv[])
     string encrypted_msg_file = argv[1];
     string public_key_file = argv[2];
     string private_key_file = argv[3];
+    string passphrase = "Yosif123";
 
     // Load third party public key
     FILE *public_key_fp = fopen(public_key_file.c_str(), "r");
@@ -222,14 +223,15 @@ int main(int argc, char *argv[])
         return 1;
     }
     RSA *private_key = PEM_read_RSAPrivateKey(private_key_fp, NULL, NULL, NULL);
-    EVP_PKEY* private_key_evp = PEM_read_PrivateKey(private_key_fp, NULL, NULL, NULL);
-    fclose(private_key_fp);
+    EVP_PKEY* private_key_evp = PEM_read_PrivateKey(private_key_fp, NULL, NULL, (void*)passphrase.c_str());
+    fclose(`rivate_key_fp);
     if (!private_key)
     {
         cout << "Error: Unable to read your private key" << endl;
         return 1;
     }
 
+    cout << "RSA Private Key: " << private_key_evp << endl;
     cout << "EVP Private Key: " << private_key_evp << endl;
 
     // Read encrypted message
