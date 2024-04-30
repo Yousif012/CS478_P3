@@ -1,0 +1,3 @@
+Your name: John Doe
+Your banner ID: B12345678
+Symmetric Algorithm: AES
