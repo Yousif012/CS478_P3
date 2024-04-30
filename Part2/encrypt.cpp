@@ -115,15 +115,67 @@ string symmetric_encrypt(const string &plaintext, const string &symmetric_key)
 }
 
 // Function to sign content using RSA private key
-string rsa_sign(const string &content, RSA *private_key)
+string rsa_sign(const string &content, EVP_PKEY *private_key)
 {
-    // Perform RSA signing with private key
-    // You can implement RSA signing or use OpenSSL's EVP interface for this
-    // For demonstration, let's assume you have an RSA signing function
-    // string signature = rsa_sign(content, private_key);
+    // Initialize the EVP_MD_CTX structure
+    EVP_MD_CTX *md_ctx = EVP_MD_CTX_new();
+    if (!md_ctx)
+    {
+        // Handle error
+        return "";
+    }
 
-    // For now, let's just return content as demonstration
-    return content;
+    // Initialize the signing operation with the SHA-256 digest algorithm
+    if (EVP_DigestSignInit(md_ctx, NULL, EVP_sha256(), NULL, private_key) != 1)
+    {
+        // Handle error
+        EVP_MD_CTX_free(md_ctx);
+        return "";
+    }
+
+    // Perform the signing operation
+    if (EVP_DigestSignUpdate(md_ctx, content.c_str(), content.length()) != 1)
+    {
+        // Handle error
+        EVP_MD_CTX_free(md_ctx);
+        return "";
+    }
+
+    // Get the length of the signature
+    size_t sig_len;
+    if (EVP_DigestSignFinal(md_ctx, NULL, &sig_len) != 1)
+    {
+        // Handle error
+        EVP_MD_CTX_free(md_ctx);
+        return "";
+    }
+
+    // Allocate memory for the signature
+    unsigned char *sig = (unsigned char *)malloc(sig_len);
+    if (!sig)
+    {
+        // Handle error
+        EVP_MD_CTX_free(md_ctx);
+        return "";
+    }
+
+    // Perform the final signing operation
+    if (EVP_DigestSignFinal(md_ctx, sig, &sig_len) != 1)
+    {
+        // Handle error
+        free(sig);
+        EVP_MD_CTX_free(md_ctx);
+        return "";
+    }
+
+    // Convert the signature to a string
+    string signature(reinterpret_cast<const char *>(sig), sig_len);
+
+    // Clean up
+    free(sig);
+    EVP_MD_CTX_free(md_ctx);
+
+    return signature;
 }
 
 int main(int argc, char *argv[])
@@ -163,6 +215,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     RSA *private_key = PEM_read_RSAPrivateKey(private_key_fp, NULL, NULL, NULL);
+    EVP_PKEY* private_key_evp = PEM_read_PrivateKey(private_key_fp, NULL, NULL, NULL);
     fclose(private_key_fp);
     if (!private_key)
     {
@@ -186,7 +239,7 @@ int main(int argc, char *argv[])
     write_file("encrypted_text.txt", encrypted_text);
 
     // Step 4: Sign the encrypted content with your private key
-    string signature = rsa_sign(encrypted_text, private_key);
+    string signature = rsa_sign(encrypted_text, private_key_evp);
     write_file("signed_content.txt", signature);
 
     // Free memory
