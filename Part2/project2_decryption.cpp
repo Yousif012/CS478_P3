@@ -105,8 +105,6 @@ string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
         return "";
     }
 
-    EVP_CIPHER_CTX_set_padding(ctx, 0);
-
     // Initialize the decryption operation with AES-256 CBC mode
     if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, (const unsigned char *)symmetric_key.c_str(), NULL) != 1)
     {
