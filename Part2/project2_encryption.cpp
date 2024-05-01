@@ -275,13 +275,10 @@ int main(int argc, char *argv[])
     RSA_free(public_key);
     RSA_free(private_key);
 
-    cout << "Signature: (" << signature.length() << "): " << signature << endl;
     write_file("signature.txt", signature);
     cout << "Created signature.txt" << endl;
 
     string signed_text = encrypted_text + signature;
-
-    cout << "Signed Content: (" << signed_text.length() << "): " << signed_text << endl;
 
     write_file("signed_encrypted_text.txt", signed_text);
     cout << "Created signed_encrypted_text.txt" << endl;
