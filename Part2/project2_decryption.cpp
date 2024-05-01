@@ -121,9 +121,12 @@ int main(int argc, char* argv[]) {
     stringstream encrypted_buffer;
     encrypted_buffer << encrypted_stream.rdbuf();
     string encrypted_content = encrypted_buffer.str();
+
+    cout << "Encrypted Message: " << endl << encrypted_content << endl;
+
     string decrypted_content = symmetric_decrypt(encrypted_content, symmetric_key);
 
-    cout << "Decrypted Message: " << decrypted_content << endl;
+    cout << "Decrypted Message: " << endl << decrypted_content << endl;
 
     // Read the public key for signature verification
     FILE* public_key_fp = fopen(public_key_file.c_str(), "r");

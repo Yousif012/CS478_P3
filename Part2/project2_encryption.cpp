@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
     write_file("symmetric.txt", symmetric_key);
 
     // Step 3: Encrypt a text file with symmetric key
-    string plaintext = "Your name: John Doe\nYour banner ID: B12345678\nSymmetric Algorithm: AES\n";
+    string plaintext = "Yosif Yosif\nBanner ID: 800743159\nSymmetric Algorithm: AES\n";
     string encrypted_text = symmetric_encrypt(plaintext, symmetric_key);
     write_file("encrypted_text.txt", encrypted_text);
 
