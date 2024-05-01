@@ -116,8 +116,6 @@ int main(int argc, char* argv[]) {
     }
     getline(symmetric_key_stream, symmetric_key);
 
-    cout << "Symmetric Key: " << symmetric_key << endl;
-
     // Decrypt the encrypted file using the symmetric key
     ifstream encrypted_stream(encrypted_file);
     stringstream encrypted_buffer;

@@ -253,18 +253,11 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    cout << "RSA Private Key: " << private_key << endl;
-    cout << "EVP Private Key: " << private_key_evp << endl;
-
     // Read encrypted message
     string encrypted_msg = read_file(encrypted_msg_file);
 
-    cout << "Encrypted Message: " << encrypted_msg << endl;
-
     // Step 2: Decrypt the encrypted message with third party public key
     string symmetric_key = rsa_decrypt(encrypted_msg, public_key);
-
-    cout << "Symmetric Key: " << symmetric_key << endl;
 
     write_file("symmetric.txt", symmetric_key);
 
@@ -272,6 +265,8 @@ int main(int argc, char *argv[])
     string plaintext = "Your name: John Doe\nYour banner ID: B12345678\nSymmetric Algorithm: AES\n";
     string encrypted_text = symmetric_encrypt(plaintext, symmetric_key);
     write_file("encrypted_text.txt", encrypted_text);
+
+    cout << "Encrypted Text: " << encrypted_msg << endl;
 
     // Step 4: Sign the encrypted content with your private key
     string signature = rsa_sign(encrypted_text, private_key_evp);
@@ -281,7 +276,7 @@ int main(int argc, char *argv[])
     RSA_free(public_key);
     RSA_free(private_key);
 
-    cout << "Signature: " << signature << endl;
+    cout << "Signed content: " << signature << endl;
 
     cout << "Encryption completed successfully." << endl;
 
