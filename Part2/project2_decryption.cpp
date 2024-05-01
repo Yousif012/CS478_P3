@@ -206,8 +206,8 @@ int main(int argc, char* argv[]) {
     cout << "RSA Size: " << RSA_size(public_key) << endl;
 
     // Verify the signature
-    string signature_content = encrypted_content.substr(encrypted_content.size() - RSA_size(public_key));
-    string file_content = encrypted_content.substr(0, encrypted_content.size() - RSA_size(public_key));
+    string signature_content = encrypted_content.substr(encrypted_content.length() - RSA_size(public_key));
+    string file_content = encrypted_content.substr(0, encrypted_content.length() - RSA_size(public_key));
     EVP_PKEY* public_key_evp = rsa_to_evp_pkey(public_key);
     string signature_verified = rsa_verify(signature_content, file_content, public_key_evp);
     RSA_free(public_key);
