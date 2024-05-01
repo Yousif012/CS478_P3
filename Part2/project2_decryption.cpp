@@ -56,6 +56,7 @@ string rsa_verify(const string &sig, const string &content, EVP_PKEY *public_key
     }
 
     // Perform the final signing operation
+    cout << "Here: " << (const unsigned char*)sig.c_str() << endl;
     int rc = EVP_DigestVerifyFinal(md_ctx, (const unsigned char*)sig.c_str(), sig.length());
     if (rc != 1)
     {
