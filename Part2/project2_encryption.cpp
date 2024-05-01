@@ -1,3 +1,9 @@
+/*
+Name: Yosif Yosif
+Date: 04/30/2024
+Description: RSA Encryption program for CS478
+*/
+
 #include <iostream>
 #include <fstream>
 #include <string>
