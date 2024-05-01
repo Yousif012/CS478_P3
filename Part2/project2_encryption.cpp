@@ -272,13 +272,13 @@ int main(int argc, char *argv[])
 
     // Step 4: Sign the encrypted content with your private key
     string signature = rsa_sign(encrypted_text, private_key_evp);
-    write_file("signed_content.txt", signature);
+    write_file("signature.txt", signature);
 
     // Free memory
     RSA_free(public_key);
     RSA_free(private_key);
 
-    cout << "Signed content: " << signature << endl;
+    cout << "Signature: " << signature << endl;
 
     cout << "Encryption completed successfully." << endl;
 
