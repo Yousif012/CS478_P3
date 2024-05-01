@@ -34,7 +34,7 @@ string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
     if (!ctx)
     {
         // Handle error
-        printf("EVP_CIPHER_CTX_new failed");
+        printf("EVP_CIPHER_CTX_new failed\n");
         return "";
     }
 
@@ -42,7 +42,7 @@ string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
     if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, (const unsigned char *)symmetric_key.c_str(), NULL) != 1)
     {
         // Handle error
-        printf("EVP_DecryptInit_ex failed");
+        printf("EVP_DecryptInit_ex failed\n");
         EVP_CIPHER_CTX_free(ctx);
         return "";
     }
@@ -64,7 +64,7 @@ string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
     if (EVP_DecryptUpdate(ctx, plaintext, &len, (const unsigned char *)ciphertext.c_str(), ciphertext.length()) != 1)
     {
         // Handle error
-        printf("EVP_DecryptUpdate failed");
+        printf("EVP_DecryptUpdate failed\n");
         free(plaintext);
         EVP_CIPHER_CTX_free(ctx);
         return "";
@@ -76,7 +76,8 @@ string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
     if (EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1)
     {
         // Handle error
-        printf("EVP_DecryptFinal_ex failed");
+        printf("EVP_DecryptFinal_ex failed\n");
+        cout << plaintext << endl;
         free(plaintext);
         EVP_CIPHER_CTX_free(ctx);
         return "";
