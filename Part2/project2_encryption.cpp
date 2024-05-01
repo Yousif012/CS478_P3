@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
 
     cout << "Signed Content: " << signed_text << endl;
 
-    write_file("encrypted_text.txt", encrypted_text);
+    write_file("encrypted_text.txt", signed_text);
 
     cout << "Encryption completed successfully." << endl;
 
