@@ -28,11 +28,13 @@ bool verify_signature(const string& file_content, const string& signature_conten
 // Function to decrypt content using symmetric key
 string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
 {
-    // Initialize the plaintext context
+
+    /* Create and initialise the context */
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     if (!ctx)
     {
         // Handle error
+        printf("EVP_CIPHER_CTX_new failed");
         return "";
     }
 
@@ -40,6 +42,7 @@ string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
     if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, (const unsigned char *)symmetric_key.c_str(), NULL) != 1)
     {
         // Handle error
+        printf("EVP_DecryptInit_ex failed");
         EVP_CIPHER_CTX_free(ctx);
         return "";
     }
@@ -61,6 +64,7 @@ string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
     if (EVP_DecryptUpdate(ctx, plaintext, &len, (const unsigned char *)ciphertext.c_str(), ciphertext.length()) != 1)
     {
         // Handle error
+        printf("EVP_DecryptUpdate failed");
         free(plaintext);
         EVP_CIPHER_CTX_free(ctx);
         return "";
@@ -72,6 +76,7 @@ string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
     if (EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1)
     {
         // Handle error
+        printf("EVP_DecryptFinal_ex failed");
         free(plaintext);
         EVP_CIPHER_CTX_free(ctx);
         return "";
