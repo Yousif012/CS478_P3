@@ -265,18 +265,12 @@ int main(int argc, char *argv[])
     cout << "Plaintext: " << endl << plaintext << endl;
     string encrypted_text = symmetric_encrypt(plaintext, symmetric_key);
 
-    write_file("encrypted_text.txt", encrypted_text);
-    cout << "Created encrypted_text.txt" << endl;
-
     // Sign the encrypted content with your private key
     string signature = rsa_sign(encrypted_text, private_key_evp);
 
     // Free memory
     RSA_free(public_key);
     RSA_free(private_key);
-
-    write_file("signature.txt", signature);
-    cout << "Created signature.txt" << endl;
 
     string signed_text = encrypted_text + signature;
 
