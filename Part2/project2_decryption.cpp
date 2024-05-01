@@ -191,7 +191,13 @@ int main(int argc, char* argv[]) {
     EVP_PKEY* public_key_evp = rsa_to_evp_pkey(public_key);
     bool signature_verified = rsa_verify(signature_content, file_content, public_key_evp);
     RSA_free(public_key);
-    cout << "Signature verified? " << endl << signature_verified << endl;
+    if (signature_verified == 1){
+        cout << "Signature verified" << endl;
+    }
+    else {
+        cout << "Signature verification failed" << endl;
+        return 0;
+    }
 
     // Decrypt the encrypted file using the symmetric key
     string decrypted_content = symmetric_decrypt(file_content, symmetric_key);
