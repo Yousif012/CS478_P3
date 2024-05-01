@@ -183,17 +183,6 @@ int main(int argc, char* argv[]) {
     }
     getline(symmetric_key_stream, symmetric_key);
 
-    // Decrypt the encrypted file using the symmetric key
-    ifstream encrypted_stream(encrypted_file);
-    stringstream encrypted_buffer;
-    encrypted_buffer << encrypted_stream.rdbuf();
-    string encrypted_content = encrypted_buffer.str();
-
-    cout << "Encrypted Message: " << endl << encrypted_content << endl;
-
-    string decrypted_content = symmetric_decrypt(encrypted_content, symmetric_key);
-
-    cout << "Decrypted Message: " << endl << decrypted_content << endl;
 
     // Read the public key for signature verification
     FILE* public_key_fp = fopen(public_key_file.c_str(), "r");
@@ -208,12 +197,25 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // Get encrypted text
+    ifstream encrypted_stream(encrypted_file);
+    stringstream encrypted_buffer;
+    encrypted_buffer << encrypted_stream.rdbuf();
+    string encrypted_content = encrypted_buffer.str();
+
     // Verify the signature
     string signature_content = encrypted_content.substr(encrypted_content.size() - RSA_size(public_key));
     string file_content = encrypted_content.substr(0, encrypted_content.size() - RSA_size(public_key));
     EVP_PKEY* public_key_evp = rsa_to_evp_pkey(public_key);
     string signature_verified = rsa_verify(signature_content, file_content, public_key_evp);
     RSA_free(public_key);
+
+    // Decrypt the encrypted file using the symmetric key
+    cout << "Encrypted Message: " << endl << file_content << endl;
+
+    string decrypted_content = symmetric_decrypt(file_content, symmetric_key);
+
+    cout << "Decrypted Message: " << endl << decrypted_content << endl;
 
     // Write the decrypted content to a plaintext file
     ofstream plaintext_file("decrypted.txt");
