@@ -26,15 +26,76 @@ bool verify_signature(const string& file_content, const string& signature_conten
 }
 
 // Function to decrypt content using symmetric key
-string symmetric_decrypt(const string& ciphertext, const string& symmetric_key) {
-    // Perform symmetric decryption (AES)
-    // You can implement AES decryption or use OpenSSL's EVP interface for this
-    // For demonstration, let's assume you have an AES decryption function
-    // string decrypted_text = aes_decrypt(ciphertext, symmetric_key);
+string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
+{
+    EVP_CIPHER_CTX *ctx;
 
-    // For now, let's just return ciphertext as demonstration
-    return ciphertext;
+    int len;
+
+    int plaintext_len;
+
+    // Initialize the plaintext context
+    EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    if (!ctx)
+    {
+        // Handle error
+        return "";
+    }
+
+    // Initialize the decryption operation with AES-256 CBC mode
+    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, (const unsigned char *)symmetric_key.c_str(), NULL) != 1)
+    {
+        // Handle error
+        EVP_CIPHER_CTX_free(ctx);
+        return "";
+    }
+
+    // Allocate memory for the plaintext (plaintext + AES block size)
+    int plaintext_len = ciphertext.length() + EVP_CIPHER_block_size(EVP_aes_256_cbc());
+    unsigned char *plaintext = (unsigned char *)malloc(plaintext_len);
+    if (!plaintext)
+    {
+        // Handle error
+        EVP_CIPHER_CTX_free(ctx);
+        return "";
+    }
+
+    int len;
+    int plaintext_actual_len;
+
+    // Perform the decryption
+    if (EVP_DecryptUpdate(ctx, plaintext, &len, (const unsigned char *)ciphertext.c_str(), ciphertext.length()) != 1)
+    {
+        // Handle error
+        free(plaintext);
+        EVP_CIPHER_CTX_free(ctx);
+        return "";
+    }
+    plaintext_actual_len = len;
+
+
+    // Finalize the decryption
+    if (EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1)
+    {
+        // Handle error
+        free(plaintext);
+        EVP_CIPHER_CTX_free(ctx);
+        return "";
+    }
+    plaintext_actual_len += len;
+
+    // Clean up
+    EVP_CIPHER_CTX_free(ctx);
+
+    // Convert the plaintext to a string
+    string decrypted_text(reinterpret_cast<const char *>(plaintext), plaintext_actual_len);
+
+    // Free memory
+    free(plaintext);
+
+    return decrypted_text;
 }
+
 
 int main(int argc, char* argv[]) {
     if (argc != 4) {
