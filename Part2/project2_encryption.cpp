@@ -175,8 +175,6 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
         return "";
     }
 
-    cout << "Signature: " << sig << endl;
-
     // Convert the signature to a string
     string signature(reinterpret_cast<const char *>(sig), sig_len);
 
@@ -279,6 +277,10 @@ int main(int argc, char *argv[])
     RSA_free(private_key);
 
     cout << "Signature: " << signature << endl;
+
+    string signed_text = encrypted_msg + signature;
+
+    cout << "Signed Content: " << signature << endl;
 
     cout << "Encryption completed successfully." << endl;
 
