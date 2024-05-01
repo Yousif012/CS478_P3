@@ -30,10 +30,6 @@ string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
 {
     EVP_CIPHER_CTX *ctx;
 
-    int len;
-
-    int plaintext_len;
-
     // Initialize the plaintext context
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     if (!ctx)
