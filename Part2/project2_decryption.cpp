@@ -192,6 +192,9 @@ int main(int argc, char* argv[]) {
 
     cout << "Encrypted Message: " << endl << encrypted_content << endl;
 
+    string decrypted_content = symmetric_decrypt(encrypted_content, symmetric_key);
+
+    cout << "Decrypted Message: " << endl << decrypted_content << endl;
 
     // Read the public key for signature verification
     FILE* public_key_fp = fopen(public_key_file.c_str(), "r");
@@ -212,12 +215,6 @@ int main(int argc, char* argv[]) {
     EVP_PKEY* public_key_evp = rsa_to_evp_pkey(public_key);
     string signature_verified = rsa_verify(signature_content, file_content, public_key_evp);
     RSA_free(public_key);
-
-    string decrypted_content = symmetric_decrypt(encrypted_content, symmetric_key);
-
-    cout << "Decrypted Message: " << endl << decrypted_content << endl;
-
-
 
     // Write the decrypted content to a plaintext file
     ofstream plaintext_file("decrypted.txt");
