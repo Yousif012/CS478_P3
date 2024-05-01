@@ -9,7 +9,7 @@ using namespace std;
 
 
 // Function to verify signature with RSA public key
-bool verify_signature(const std::string& file_content, const std::string& signature_content, RSA* public_key) {
+bool verify_signature(const std::string& signature_content, const std::string& file_content,  RSA* public_key) {
     EVP_PKEY* evp_public_key = EVP_PKEY_new();
     EVP_PKEY_assign_RSA(evp_public_key, public_key);
 
@@ -56,12 +56,12 @@ string rsa_verify(const string &sig, const string &content, EVP_PKEY *public_key
     }
 
     // Perform the final signing operation
-    int rc = EVP_DigestVerifyFinal(md_ctx, (const unsigned char*)sig.c_str(), sig.size());
+    int rc = EVP_DigestVerifyFinal(md_ctx, (const unsigned char*)sig.c_str(), sig.length());
     if (rc != 1)
     {
         // Handle error
         EVP_MD_CTX_free(md_ctx);
-        printf("EVP_DigestSignFinal failed\n");
+        printf("EVP_DigestVerifyFinal failed\n");
         return "";
     }
 
