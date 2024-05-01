@@ -217,7 +217,7 @@ int main(int argc, char* argv[]) {
     cout << "Encrypted Message: " << endl << file_content << endl;
     cout << "Signature: " << endl << signature_content << endl;
 
-    string decrypted_content = symmetric_decrypt(file_content, symmetric_key);
+    string decrypted_content = symmetric_decrypt(encrypted_content, symmetric_key);
 
     cout << "Decrypted Message: " << endl << decrypted_content << endl;
 
