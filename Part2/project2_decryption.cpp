@@ -213,6 +213,7 @@ int main(int argc, char* argv[]) {
 
     // Decrypt the encrypted file using the symmetric key
     cout << "Encrypted Message: " << endl << file_content << endl;
+    cout << "Signature: " << endl << signature_content << endl;
 
     string decrypted_content = symmetric_decrypt(file_content, symmetric_key);
 
