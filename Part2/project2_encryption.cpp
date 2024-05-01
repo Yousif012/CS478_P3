@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Load your private key
+    // Load the private key
     FILE *private_key_fp = fopen(private_key_file.c_str(), "r");
     if (!private_key_fp)
     {
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
     cout << "Plaintext: " << endl << plaintext << endl;
     string encrypted_text = symmetric_encrypt(plaintext, symmetric_key);
 
-    // Sign the encrypted content with your private key
+    // Sign the encrypted content with the private key
     string signature = rsa_sign(encrypted_text, private_key_evp);
 
     // Free memory

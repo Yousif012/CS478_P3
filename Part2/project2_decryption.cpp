@@ -1,3 +1,9 @@
+/*
+Name: Yosif Yosif
+Date: 04/30/2024
+Description: RSA Decryption program for CS478
+*/
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -47,8 +53,8 @@ bool rsa_verify(const string &sig, const string &content, EVP_PKEY *public_key)
         return "";
     }
 
-    // Convert the signature to a string
-    return rc == 1;
+    // return true if verified
+    return 1;
 }
 
 // Convert RSA to EVP_PKEY type
