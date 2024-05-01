@@ -9,22 +9,6 @@ using namespace std;
 
 
 // Function to verify signature with RSA public key
-bool verify_signature(const string& file_content, const string& signature_content, RSA* public_key) {
-    EVP_PKEY* evp_public_key = EVP_PKEY_new();
-    EVP_PKEY_assign_RSA(evp_public_key, public_key);
-
-    EVP_MD_CTX* ctx = EVP_MD_CTX_new();
-    EVP_VerifyInit(ctx, EVP_sha256());
-    EVP_VerifyUpdate(ctx, file_content.c_str(), file_content.size());
-
-    int result = EVP_VerifyFinal(ctx, (const unsigned char*)signature_content.c_str(), signature_content.size(), evp_public_key);
-
-    EVP_MD_CTX_free(ctx);
-    EVP_PKEY_free(evp_public_key);
-
-    return (result == 1);
-}
-
 string rsa_verify(const string &content, EVP_PKEY *public_key)
 {
     // Initialize the EVP_MD_CTX structure
@@ -54,25 +38,8 @@ string rsa_verify(const string &content, EVP_PKEY *public_key)
         return "";
     }
 
-    // Get the length of the signature
     size_t sig_len;
-    if (EVP_DigestVerifyFinal(md_ctx, NULL, sig_len) != 1)
-    {
-        // Handle error
-        EVP_MD_CTX_free(md_ctx);
-        printf("EVP_DigestSignFinal (1) failed\n");
-        return "";
-    }
-
-    // Allocate memory for the signature
-    unsigned char *sig = (unsigned char *)malloc(sig_len);
-    if (!sig)
-    {
-        // Handle error
-        EVP_MD_CTX_free(md_ctx);
-        printf("OPENSSL_malloc failed\n");
-        return "";
-    }
+    unsigned char *sig;
 
     // Perform the final signing operation
     int rc = EVP_DigestVerifyFinal(md_ctx, sig, sig_len);
