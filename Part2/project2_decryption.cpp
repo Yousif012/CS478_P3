@@ -26,7 +26,7 @@ bool verify_signature(const std::string& file_content, const std::string& signat
 }
 
 // Function to verify signature with RSA public key
-string rsa_verify(const string &content, EVP_PKEY *public_key)
+string rsa_verify(const string &sig, const string &content, EVP_PKEY *public_key)
 {
     // Initialize the EVP_MD_CTX structure
     EVP_MD_CTX *md_ctx = EVP_MD_CTX_new();
@@ -55,28 +55,18 @@ string rsa_verify(const string &content, EVP_PKEY *public_key)
         return "";
     }
 
-    size_t sig_len;
-    unsigned char *sig;
-
     // Perform the final signing operation
-    int rc = EVP_DigestVerifyFinal(md_ctx, (const unsigned char*)content.c_str(), content.size());
+    int rc = EVP_DigestVerifyFinal(md_ctx, (const unsigned char*)sig.c_str(), sig.size());
     if (rc != 1)
     {
         // Handle error
-        free(sig);
         EVP_MD_CTX_free(md_ctx);
         printf("EVP_DigestSignFinal failed\n");
         return "";
     }
 
     // Convert the signature to a string
-    string signature(reinterpret_cast<const char *>(sig), sig_len);
-
-    // Clean up
-    free(sig);
-    EVP_MD_CTX_free(md_ctx);
-
-    return signature;
+    return sig;
 }
 
 
@@ -219,7 +209,7 @@ int main(int argc, char* argv[]) {
     string signature_content = encrypted_content.substr(encrypted_content.size() - RSA_size(public_key));
     string file_content = encrypted_content.substr(0, encrypted_content.size() - RSA_size(public_key));
     EVP_PKEY* public_key_evp = rsa_to_evp_pkey(public_key);
-    string signature_verified = rsa_verify(encrypted_content, public_key_evp);
+    string signature_verified = rsa_verify(signature_content, file_content, public_key_evp);
     RSA_free(public_key);
 
     string decrypted_content = symmetric_decrypt(encrypted_content, symmetric_key);
