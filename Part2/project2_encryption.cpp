@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
 
     string signed_text = encrypted_msg + signature;
 
-    cout << "Signed Content: " << signature << endl;
+    cout << "Signed Content: " << signed_text << endl;
 
     cout << "Encryption completed successfully." << endl;
 
