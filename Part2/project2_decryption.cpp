@@ -203,10 +203,6 @@ int main(int argc, char* argv[]) {
     encrypted_buffer << encrypted_stream.rdbuf();
     string encrypted_content = encrypted_buffer.str();
 
-    string decrypted_content = symmetric_decrypt(decrypted_content, symmetric_key);
-
-    cout << "Decrypted Message: " << endl << decrypted_content << endl;
-
     // Verify the signature
     string signature_content = encrypted_content.substr(encrypted_content.length() - RSA_size(public_key));
     string file_content = encrypted_content.substr(0, encrypted_content.length() - RSA_size(public_key));
@@ -218,7 +214,7 @@ int main(int argc, char* argv[]) {
     // Decrypt the encrypted file using the symmetric key
     cout << "Encrypted Message: " << endl << file_content << endl;
 
-    decrypted_content = symmetric_decrypt(file_content, symmetric_key);
+    string decrypted_content = symmetric_decrypt(file_content, symmetric_key);
 
     cout << "Decrypted Message: " << endl << decrypted_content << endl;
 
