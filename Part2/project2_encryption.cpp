@@ -264,13 +264,11 @@ int main(int argc, char *argv[])
     // Step 3: Encrypt a text file with symmetric key
     string plaintext = "Yosif Yosif\nBanner ID: 800743159\nSymmetric Algorithm: AES\n";
     string encrypted_text = symmetric_encrypt(plaintext, symmetric_key);
-    write_file("encrypted_text.txt", encrypted_text);
 
     cout << "Encrypted Text: " << encrypted_msg << endl;
 
     // Step 4: Sign the encrypted content with your private key
     string signature = rsa_sign(encrypted_text, private_key_evp);
-    write_file("signature.txt", signature);
 
     // Free memory
     RSA_free(public_key);
@@ -281,6 +279,8 @@ int main(int argc, char *argv[])
     string signed_text = encrypted_msg + signature;
 
     cout << "Signed Content: " << signed_text << endl;
+
+    write_file("encrypted_text.txt", encrypted_text);
 
     cout << "Encryption completed successfully." << endl;
 
