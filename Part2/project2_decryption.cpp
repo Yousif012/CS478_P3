@@ -25,6 +25,99 @@ bool verify_signature(const string& file_content, const string& signature_conten
     return (result == 1);
 }
 
+string rsa_verify(const string &content, EVP_PKEY *public_key)
+{
+    // Initialize the EVP_MD_CTX structure
+    EVP_MD_CTX *md_ctx = EVP_MD_CTX_new();
+    if (!md_ctx)
+    {
+        // Handle error
+        printf("EVP_MD_CTX_create failed\n");
+        return "";
+    }
+
+    // Initialize the signing operation with the SHA-256 digest algorithm
+    if (EVP_DigestVerifyInit(md_ctx, NULL, EVP_sha256(), NULL, public_key) != 1)
+    {
+        // Handle error
+        EVP_MD_CTX_free(md_ctx);
+        printf("EVP_DigestVerifyInit failed\n");
+        return "";
+    }
+
+    // Perform the signing operation
+    if (EVP_DigestVerifyUpdate(md_ctx, content.c_str(), content.length()) != 1)
+    {
+        // Handle error
+        EVP_MD_CTX_free(md_ctx);
+        printf("EVP_DigestSignUpdate failed\n");
+        return "";
+    }
+
+    // Get the length of the signature
+    size_t sig_len;
+    if (EVP_DigestVerifyFinal(md_ctx, NULL, sig_len) != 1)
+    {
+        // Handle error
+        EVP_MD_CTX_free(md_ctx);
+        printf("EVP_DigestSignFinal (1) failed\n");
+        return "";
+    }
+
+    // Allocate memory for the signature
+    unsigned char *sig = (unsigned char *)malloc(sig_len);
+    if (!sig)
+    {
+        // Handle error
+        EVP_MD_CTX_free(md_ctx);
+        printf("OPENSSL_malloc failed\n");
+        return "";
+    }
+
+    // Perform the final signing operation
+    int rc = EVP_DigestVerifyFinal(md_ctx, sig, sig_len);
+    if (rc != 1)
+    {
+        // Handle error
+        free(sig);
+        EVP_MD_CTX_free(md_ctx);
+        printf("EVP_DigestSignFinal failed (2)\n");
+        return "";
+    }
+
+    // Convert the signature to a string
+    string signature(reinterpret_cast<const char *>(sig), sig_len);
+
+    // Clean up
+    free(sig);
+    EVP_MD_CTX_free(md_ctx);
+
+    return signature;
+}
+
+
+EVP_PKEY* rsa_to_evp_pkey(RSA* rsa_key) {
+    if (!rsa_key) {
+        // Handle error
+        return nullptr;
+    }
+
+    EVP_PKEY* evp_pkey = EVP_PKEY_new();
+    if (!evp_pkey) {
+        // Handle error
+        return nullptr;
+    }
+
+    if (EVP_PKEY_assign_RSA(evp_pkey, rsa_key) != 1) {
+        // Handle error
+        EVP_PKEY_free(evp_pkey);
+        return nullptr;
+    }
+
+    return evp_pkey;
+}
+
+
 // Function to decrypt content using symmetric key
 string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
 {
@@ -142,15 +235,9 @@ int main(int argc, char* argv[]) {
     }
 
     // Verify the signature
-    string signature_content = decrypted_content.substr(decrypted_content.size() - RSA_size(public_key));
-    string file_content = decrypted_content.substr(0, decrypted_content.size() - RSA_size(public_key));
-    bool signature_verified = verify_signature(file_content, signature_content, public_key);
+    EVP_PKEY* public_key_evp = rsa_to_evp_pkey(public_key);
+    string signature_verified = rsa_verify(decrypted_content, public_key_evp);
     RSA_free(public_key);
-
-    if (!signature_verified) {
-        cerr << "Error: Signature verification failed.\n";
-        return 1;
-    }
 
     // Write the decrypted content to a plaintext file
     ofstream plaintext_file("decrypted.txt");
@@ -158,7 +245,7 @@ int main(int argc, char* argv[]) {
         cerr << "Error: Failed to create plaintext file.\n";
         return 1;
     }
-    plaintext_file << file_content;
+    plaintext_file << signature_verified;
     plaintext_file.close();
 
     cout << "Decryption and signature verification successful. Decrypted content saved to decrypted.txt.\n";
