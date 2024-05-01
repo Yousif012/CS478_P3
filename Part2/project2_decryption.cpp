@@ -203,6 +203,8 @@ int main(int argc, char* argv[]) {
     encrypted_buffer << encrypted_stream.rdbuf();
     string encrypted_content = encrypted_buffer.str();
 
+    cout << "RSA Size: " << RSA_size(public_key) << endl;
+
     // Verify the signature
     string signature_content = encrypted_content.substr(encrypted_content.size() - RSA_size(public_key));
     string file_content = encrypted_content.substr(0, encrypted_content.size() - RSA_size(public_key));
