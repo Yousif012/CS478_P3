@@ -237,8 +237,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    cout << public_key << endl;
-
     // Load your private key
     FILE *private_key_fp = fopen(private_key_file.c_str(), "r");
     if (!private_key_fp)
