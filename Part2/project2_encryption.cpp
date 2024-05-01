@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
     RSA_free(public_key);
     RSA_free(private_key);
 
-    cout << "Signature: " << signature << endl;
+    cout << "Signature Length: " << signature.length() << endl;
 
     string signed_text = encrypted_msg + signature;
 
