@@ -28,8 +28,6 @@ bool verify_signature(const string& file_content, const string& signature_conten
 // Function to decrypt content using symmetric key
 string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
 {
-    EVP_CIPHER_CTX *ctx;
-
     // Initialize the plaintext context
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     if (!ctx)
