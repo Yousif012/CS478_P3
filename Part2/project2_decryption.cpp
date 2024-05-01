@@ -219,6 +219,8 @@ int main(int argc, char* argv[]) {
     }
 
     // Verify the signature
+    string signature_content = decrypted_content.substr(decrypted_content.size() - RSA_size(public_key));
+    string file_content = decrypted_content.substr(0, decrypted_content.size() - RSA_size(public_key));
     EVP_PKEY* public_key_evp = rsa_to_evp_pkey(public_key);
     string signature_verified = rsa_verify(decrypted_content, public_key_evp);
     RSA_free(public_key);

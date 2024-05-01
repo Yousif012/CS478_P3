@@ -175,6 +175,8 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
         return "";
     }
 
+    cout << "Signature: " << sig << endl;
+
     // Convert the signature to a string
     string signature(reinterpret_cast<const char *>(sig), sig_len);
 
