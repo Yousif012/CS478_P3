@@ -14,4 +14,4 @@ $(DECRYPT_TARGET): project2_decryption.cpp
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
-	rm -f $(ENCRYPT_TARGET) $(DECRYPT_TARGET) signed_encrypted_text.txt symmetric.txt decrypted.txt
+	rm -f $(ENCRYPT_TARGET) $(DECRYPT_TARGET) decrypted.txt
