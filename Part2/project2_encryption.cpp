@@ -185,6 +185,7 @@ string rsa_sign(const string &content, EVP_PKEY *private_key)
     return signature;
 }
 
+// Convert RSA to EVP_PKEY type
 EVP_PKEY* rsa_to_evp_pkey(RSA* rsa_key) {
     if (!rsa_key) {
         // Handle error
@@ -254,19 +255,20 @@ int main(int argc, char *argv[])
     // Read encrypted message
     string encrypted_msg = read_file(encrypted_msg_file);
 
-    // Step 2: Decrypt the encrypted message with third party public key
+    // Decrypt the encrypted message with third party public key
     string symmetric_key = rsa_decrypt(encrypted_msg, public_key);
 
     write_file("symmetric.txt", symmetric_key);
 
-    // Step 3: Encrypt a text file with symmetric key
+    // Encrypt a text file with symmetric key
     string plaintext = "Yosif Yosif\nBanner ID: 800743159\nSymmetric Algorithm: AES\n";
+    cout << "Plaintext: " << endl << plaintext << endl;
     string encrypted_text = symmetric_encrypt(plaintext, symmetric_key);
 
-    cout << "Encrypted Text (" << encrypted_text.length() << "): " << encrypted_text << endl;
     write_file("encrypted_text.txt", encrypted_text);
+    cout << "Created encrypted_text.txt" << endl;
 
-    // Step 4: Sign the encrypted content with your private key
+    // Sign the encrypted content with your private key
     string signature = rsa_sign(encrypted_text, private_key_evp);
 
     // Free memory
@@ -275,12 +277,14 @@ int main(int argc, char *argv[])
 
     cout << "Signature: (" << signature.length() << "): " << signature << endl;
     write_file("signature.txt", signature);
+    cout << "Created signature.txt" << endl;
 
     string signed_text = encrypted_text + signature;
 
     cout << "Signed Content: (" << signed_text.length() << "): " << signed_text << endl;
 
     write_file("signed_encrypted_text.txt", signed_text);
+    cout << "Created signed_encrypted_text.txt" << endl;
 
     cout << "Encryption completed successfully." << endl;
 

@@ -7,26 +7,8 @@
 
 using namespace std;
 
-
 // Function to verify signature with RSA public key
-bool verify_signature(const std::string& signature_content, const std::string& file_content,  RSA* public_key) {
-    EVP_PKEY* evp_public_key = EVP_PKEY_new();
-    EVP_PKEY_assign_RSA(evp_public_key, public_key);
-
-    EVP_MD_CTX* ctx = EVP_MD_CTX_new();
-    EVP_VerifyInit(ctx, EVP_sha256());
-    EVP_VerifyUpdate(ctx, file_content.c_str(), file_content.size());
-
-    int result = EVP_VerifyFinal(ctx, (const unsigned char*)signature_content.c_str(), signature_content.size(), evp_public_key);
-
-    EVP_MD_CTX_free(ctx);
-    EVP_PKEY_free(evp_public_key);
-
-    return (result == 1);
-}
-
-// Function to verify signature with RSA public key
-string rsa_verify(const string &sig, const string &content, EVP_PKEY *public_key)
+bool rsa_verify(const string &sig, const string &content, EVP_PKEY *public_key)
 {
     // Initialize the EVP_MD_CTX structure
     EVP_MD_CTX *md_ctx = EVP_MD_CTX_new();
@@ -66,10 +48,10 @@ string rsa_verify(const string &sig, const string &content, EVP_PKEY *public_key
     }
 
     // Convert the signature to a string
-    return sig;
+    return rc == 1;
 }
 
-
+// Convert RSA to EVP_PKEY type
 EVP_PKEY* rsa_to_evp_pkey(RSA* rsa_key) {
     if (!rsa_key) {
         // Handle error
@@ -90,7 +72,6 @@ EVP_PKEY* rsa_to_evp_pkey(RSA* rsa_key) {
 
     return evp_pkey;
 }
-
 
 // Function to decrypt content using symmetric key
 string symmetric_decrypt(const string &ciphertext, const string &symmetric_key)
@@ -208,24 +189,22 @@ int main(int argc, char* argv[]) {
     string file_content = encrypted_content.substr(0, encrypted_content.length() - RSA_size(public_key));
 
     EVP_PKEY* public_key_evp = rsa_to_evp_pkey(public_key);
-    string signature_verified = rsa_verify(signature_content, file_content, public_key_evp);
+    bool signature_verified = rsa_verify(signature_content, file_content, public_key_evp);
     RSA_free(public_key);
+    cout << "Signature verified? " << endl << signature_verified << endl;
 
     // Decrypt the encrypted file using the symmetric key
-    cout << "Encrypted Message: " << endl << file_content << endl;
-    cout << "Signature: " << endl << signature_content << endl;
-
     string decrypted_content = symmetric_decrypt(file_content, symmetric_key);
 
     cout << "Decrypted Message: " << endl << decrypted_content << endl;
 
-    // Write the decrypted content to a plaintext file
+    // Write the decrypted content to a text file
     ofstream plaintext_file("decrypted.txt");
     if (!plaintext_file) {
         cerr << "Error: Failed to create plaintext file.\n";
         return 1;
     }
-    plaintext_file << signature_verified;
+    plaintext_file << decrypted_content;
     plaintext_file.close();
 
     cout << "Decryption and signature verification successful. Decrypted content saved to decrypted.txt.\n";
