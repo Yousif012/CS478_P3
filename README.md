@@ -12,7 +12,7 @@ make
 ### Encryption Program
 To encrypt a message, run the encryption program with the following command:
 ```
-./rsa_encryption symm_key.bin publickey.pem priv.pem
+./encrypt symm_key.bin publickey.pem priv.pem
 ```
 
 The encrypted message will be saved in a file named `signed_encrypted_text.txt`.
@@ -20,7 +20,7 @@ The encrypted message will be saved in a file named `signed_encrypted_text.txt`.
 ### Decryption Program
 To decrypt a message, run the decryption program with the following command:
 ```
-./rsa_decryption signed_encrypted_text.txt pub.pem symmetric.txt
+./decrypt signed_encrypted_text.txt pub.pem symmetric.txt
 ```
 
 The decrypted message will be saved in a file named `decrypted.txt`.
