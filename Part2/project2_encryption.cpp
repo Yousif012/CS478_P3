@@ -267,8 +267,8 @@ int main(int argc, char *argv[])
     string plaintext = "Yosif Yosif\nBanner ID: 800743159\nSymmetric Algorithm: AES\n";
     string encrypted_text = symmetric_encrypt(plaintext, symmetric_key);
 
-    cout << "Encrypted Text (" << encrypted_msg.size() << "): " << encrypted_msg << endl;
-    write_file("encrypted_text.txt", encrypted_msg);
+    cout << "Encrypted Text (" << encrypted_text.size() << "): " << encrypted_text << endl;
+    write_file("encrypted_text.txt", encrypted_text);
 
     // Step 4: Sign the encrypted content with your private key
     string signature = rsa_sign(encrypted_text, private_key_evp);
@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
     cout << "Signature: (" << signature.size() << "): " << signature << endl;
     write_file("signature.txt", signature);
 
-    string signed_text = encrypted_msg + signature;
+    string signed_text = encrypted_text + signature;
 
     cout << "Signed Content: (" << signed_text.size() << "): " << signed_text << endl;
 
